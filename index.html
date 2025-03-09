@@ -72,12 +72,20 @@
                 attribution: 'Данные дорожной обстановки'
             })
             .on('load', trafficCtrl);
+
+            ooptWMSLayer = L.tileLayer.wms('http://trolleway.nextgis.com/api/resource/988/wms'),{
+                layers: 'oopt_russia_2011',      //'layer1,layer2,layer3'
+                format: 'image/png',
+                transparent: true,
+                attribution: '',
+            }
+
         //Создание объекта карты
 
         var myMap = L.map('map', {
             center: [55.763803, 37.662163],
-            zoom: 14,
-            layers:[osmLayer],
+            zoom: 18,
+            layers:[yandexMap],
         });
 
         //Создание объекта собсвенной иконки
@@ -89,7 +97,7 @@
         });
 
         // Создание собственного экземпляра иконок на основе существующего Icon
-        var parkIconClass = L.Icon.exptend({
+        var parkIconClass = L.Icon.extend({
             options: {
                 iconSize:[24,32],
                 IconAnchor: [12,32],
@@ -98,22 +106,23 @@
         })
 
         //Создание массива иконок для парков
-        // var parkIconArray = [
-        //     new parkIconClass({iconUrl: './data/icons/park_1.png'}),
-        //     new parkIconClass({iconUrl: './data/icons/park_2.png'}),
-        //     new parkIconClass({iconUrl: './data/icons/park_3.png'}),
-        //     new parkIconClass({iconUrl: './data/icons/park_4.png'}),
-        //     new parkIconClass({iconUrl: './data/icons/park_5.png'}),
+        var parkIconArray = [
+            new parkIconClass({iconUrl: './data/icons/park_1.png'}),
+            new parkIconClass({iconUrl: './data/icons/park_2.png'}),
+            new parkIconClass({iconUrl: './data/icons/park_3.png'}),
+            new parkIconClass({iconUrl: './data/icons/park_4.png'}),
+            new parkIconClass({iconUrl: './data/icons/park_5.png'}),
 
-        // ];
+        ];
 
-
-        // L.marker([55.7674363, 37.6593733], {
-        //     title: 'Ихихих, я лошадка',
-        //     icon:parkIconArray[2],
-        // })
-        // .bindPopup('<b>Название:</b><i> Сад имени Баумана</i><br><b>Год открытия: 1920</b><br><img src="https://yandex.ru/favicon.ico" width=280px>')
-        // .addTo(myMap)
+        var parksLayer = L.layerGroup([
+            L.marker([55.7674363, 37.6593733], {
+                title: 'Ихихих, я лошадка',
+                icon:parkIconArray[2],
+            })
+            .bindPopup('<b>Название:</b><i> Сад имени Баумана</i><br><b>Год открытия: 1920</b><br><img src="https://yandex.ru/favicon.ico" width=280px>')
+        ])
+        
 
 
         //Создание площадного объекта
@@ -128,18 +137,45 @@
             color: 'red',
             steoke: false,
         })  
+        .bindPopup('Общежитие МИИГАиК')
         .addTo(myMap);
 
         //Создание линейного объекта
 
         L.polyline([
-            [55.7637997, 37.6616961],
-            [55.7644818, 37.6617712]
+            [55.7648485, 37.6615083],
+            [55.7645285, 37.6617658],
+            [55.7637967, 37.6616961],
+            [55.7636548, 37.661806],
         ],{
             color:'red',
             weight: 4
         })
+        .bindPopup('Подъезд с Гороховского')
         .addTo(myMap);
+
+
+
+        // const geojsonFiles = ['data/hydrant/track_points.geojson', 'data/hydrant/tracks.geojson', 'data/hydrant/waypoints.geojson'];
+
+        // geojsonFiles.forEach(file => {
+        //     fetch(file)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             L.geoJSON(data, {
+        //                 pointToLayer: function (feature, latlng) {
+        //                     return L.marker(latlng, {
+        //                         icon: L.icon({
+        //                             iconUrl: './data/icons/hydrant.png', 
+        //                             iconSize: [24, 24],
+        //                             iconAnchor: [12, 12]
+        //                         })
+        //                     }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat}, ${latlng.lng}`);
+        //                 }
+        //             }).addTo(myMap);
+        //         })
+        //         .catch(error => console.error(`Ошибка загрузки ${file}:`, error));
+        // });
 
 
         // Создание списка базовых и оверлей слоев
@@ -154,6 +190,8 @@
             overlayLayers = {
                 'яндекс пробки': yandexTraffic,
                 'яндекс пробки с эл управления': yandexTrafficCtrl,
+                'Объекты ООПТ': ooptWMSLayer,
+                'Парки Москвы': parksLayer
             };
 
         //Создание и добавление на крату инструмента переключения слоев
