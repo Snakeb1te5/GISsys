@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS-servise</title>
+    <script type="text/javascript" src="./libs/dist/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="./libs/dist/leaflet.css">
+    <style type="text/css">
+      html, body,  #map{ height: 100%; width: 100%; margin: auto; }
+    </style>
+</head>
+<body>
+    <div id="map">
+    </div>
+    <script type="text/javascript" >
+        //Создание объекта слоя
+        var osmLayer = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+            attribution: 'Карта на базе OSM'
+        });
+        
+        //Создание объекта карты
+
+        var myMap = L.map('map', {
+            center: [55.763803, 37.662163],
+            zoom: 14,
+            layers:[osmLayer],
+        })
+    </script>
+</body>
+</html>
