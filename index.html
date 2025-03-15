@@ -14,6 +14,7 @@
 </head>
 <body>
     <div id="map">
+    <script type="text/javascript" src="./data/shapes/railwayStations.js"></script>
     </div>
     <script type="text/javascript" >
         //Создание функции для трансляции дорожной обстановки серез Yandex api 
@@ -176,7 +177,26 @@
         //         })
         //         .catch(error => console.error(`Ошибка загрузки ${file}:`, error));
         // });
+        
 
+        //Загрузка точечных объектов из геоджейсон
+        L.geoJSON(rws, {
+            pointToLayer: function(feature, latlng){
+                let yearOpen = feature.properties.yearOpen;
+                yearOpen < 1900 ? icn = parkIconArray[4]:
+                yearOpen >= 1900 && yearOpen < 2000 ? icn = parkIconArray[1]:
+                    icn = parkIconArray[0]; 
+
+                return L.marker(latlng, {
+                    title: feature.properties.name,
+                    icon: icn
+                })
+            }
+        })
+        .bindPopup(function(rws){
+            return "<b> Название вокзала:</b> <i>" + rws.feature.properties.name + "</i>"
+        })
+        .addTo(myMap);
 
         // Создание списка базовых и оверлей слоев
         var baseLayers = {
