@@ -15,6 +15,7 @@
 <body>
     <div id="map">
     <script type="text/javascript" src="./data/shapes/railwayStations.js"></script>
+    <script type="text/javascript" src="./data/hydrant/mapOfHudrant.js"></script>
     </div>
     <script type="text/javascript" >
         //Создание функции для трансляции дорожной обстановки серез Yandex api 
@@ -136,7 +137,8 @@
             fillColor:'yellow',
             fillOpacity: 0.9,
             color: 'red',
-            steoke: false,
+            stroke: true,
+            smoothFactor: 0.1
         })  
         .bindPopup('Общежитие МИИГАиК')
         .addTo(myMap);
@@ -180,6 +182,7 @@
         
 
         //Загрузка точечных объектов из геоджейсон
+        
         L.geoJSON(rws, {
             pointToLayer: function(feature, latlng){
                 let yearOpen = feature.properties.yearOpen;
@@ -198,6 +201,26 @@
         })
         .addTo(myMap);
 
+
+
+        //Создание точечных объектов гидрантов
+        var hydrantLayer = L.layerGroup ([
+            L.geoJSON(hydrant, {
+                pointToLayer: function(feature, latlng){
+                    var hydrantIcon = L.icon ({iconUrl: './data/icons/hydrant.png', iconSize: [24, 24]});
+                    return L.marker(latlng, {
+                        title: feature.properties.name,
+                        icon: hydrantIcon
+                    })
+                }
+            })
+            .bindPopup(function(hydrant){
+                return "<b> Гидрант:</b> <i>" + hydrant.feature.properties.name + "</i>"
+            })
+            
+        ])
+        
+
         // Создание списка базовых и оверлей слоев
         var baseLayers = {
             'OSM карта': osmLayer,
@@ -211,7 +234,8 @@
                 'яндекс пробки': yandexTraffic,
                 'яндекс пробки с эл управления': yandexTrafficCtrl,
                 'Объекты ООПТ': ooptWMSLayer,
-                'Парки Москвы': parksLayer
+                'Парки Москвы': parksLayer,
+                'Расположение гидрантов': hydrantLayer
             };
 
         //Создание и добавление на крату инструмента переключения слоев
