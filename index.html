@@ -15,6 +15,9 @@
 <body>
     <div id="map">
     <script type="text/javascript" src="./data/shapes/railwayStations.js"></script>
+    <script type="text/javascript" src="./data/shapes/railwayStations_photo.js"></script>
+    <script type="text/javascript" src="./data/shapes/buildings.js"></script>
+
     </div>
     <script type="text/javascript" >
         //Создание функции для трансляции дорожной обстановки серез Yandex api 
@@ -194,7 +197,20 @@
             }
         })
         .bindPopup(function(rws){
-            return "<b> Название вокзала:</b> <i>" + rws.feature.properties.name + "</i>"
+            let rwsPhoto = '';
+            if (rws.feature.properties.photo_link != null){
+                rwsPhoto = '<img src ="./data/rws/' + rws.feature.properties.photo_link + '.jpg" width = 280px>'
+            };
+            return "<b> Название вокзала:</b> <i>" + rws.feature.properties.name + "</i>" + rwsPhoto
+        })
+        .addTo(myMap);
+
+        L.geoJSON(buildings,{
+            style: function(feature){
+                feature.properties.material == 'кирпич' ? colorFill = "red": 
+                colorFill = 'grey'
+                return {color: colorFill}
+            }
         })
         .addTo(myMap);
 
