@@ -162,28 +162,6 @@
 
 
 
-        // const geojsonFiles = ['data/hydrant/track_points.geojson', 'data/hydrant/tracks.geojson', 'data/hydrant/waypoints.geojson'];
-
-        // geojsonFiles.forEach(file => {
-        //     fetch(file)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             L.geoJSON(data, {
-        //                 pointToLayer: function (feature, latlng) {
-        //                     return L.marker(latlng, {
-        //                         icon: L.icon({
-        //                             iconUrl: './data/icons/hydrant.png', 
-        //                             iconSize: [24, 24],
-        //                             iconAnchor: [12, 12]
-        //                         })
-        //                     }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat}, ${latlng.lng}`);
-        //                 }
-        //             }).addTo(myMap);
-        //         })
-        //         .catch(error => console.error(`Ошибка загрузки ${file}:`, error));
-        // });
-        
-
         //Загрузка точечных объектов из геоджейсон
         
         L.geoJSON(rws, {
@@ -231,7 +209,7 @@
                 }
             })
             .bindPopup(function(hydrant){
-                return "<b> Гидрант:</b> <i>" + hydrant.feature.properties.name + "</i>"
+                return "<b> Гидрант:</b> <i>" + hydrant.feature.properties.street + hydrant.feature.properties.housenumber + "</i>"
             })
             
         ])
