@@ -212,6 +212,7 @@
 
             if (!routingEnabled) return;
 
+            
             var container = L.DomUtil.create('div'),
                 startBtn = createButton('Отсюда', container),
                 destBtn = createButton('Сюда', container);
@@ -304,24 +305,9 @@
 
 
 
-        //Создание точечных объектов гидрантов
-        // var hydrantLayer = L.layerGroup ([
-        //     L.geoJSON(hydrant, {
-        //         pointToLayer: function(feature, latlng){
-        //             var hydrantIcon = L.icon ({iconUrl: './data/icons/hydrant.png', iconSize: [24, 24]});
-        //             return L.marker(latlng, {
-        //                 title: feature.properties.name,
-        //                 icon: hydrantIcon
-        //             })
-        //         }
-        //     })
-        //     .bindPopup(function(hydrant){
-        //         return "<b> Гидрант:</b> <i>" + hydrant.feature.properties.name + "</i>"
-        //     })
-            
-        // ])
-        let routingControl = null;
-        const hydrantMarkers = []; // массив маркеров
+        
+        let  routingControl = null;
+        const hydrantMarkers = []; 
 
         const hydrantLayer = L.geoJSON(hydrant, {
             pointToLayer: function(feature, latlng) {
@@ -333,7 +319,7 @@
                     })
                 }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`);
 
-                hydrantMarkers.push(marker); // сохранить в массив
+                hydrantMarkers.push(marker); 
                 return marker;
             }
         }).addTo(myMap);
@@ -374,6 +360,9 @@
         // });
 
         myMap.on('click', function(e) {
+
+            if (routingEnabled) return;
+
             const clickLatLng = e.latlng;
 
             let nearest = null;
