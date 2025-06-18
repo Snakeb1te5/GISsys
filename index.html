@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIS-servise</title>
-    
-    <script type="text/javascript" src="./libs/dist/leaflet.js"></script>
-    <script type="text/javascript" src="https://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
-    <script type="text/javascript" src="./libs/Yandex.js"></script>
-    <link rel="stylesheet" type="text/css" href="./libs/dist/leaflet.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GIS-servise</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<!-- Leaflet CSS + JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <style type="text/css">
-      html, body,  #map{ height: 100%; width: 100%; margin: auto; }
-    </style>
+<!-- Leaflet Routing Machine -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<!-- GraphHopper plugin -->
+<script src="https://unpkg.com/leaflet-routing-graphhopper@1.2.0/dist/lrm-graphhopper.min.js"></script>
+
+<!-- Yandex Maps -->
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
+<script src="./libs/Yandex.js"></script>
+
+<style>
+    html, body, #map {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    }
+</style>
 </head>
+      
 <body>
     <div id="map">
     <script type="text/javascript" src="./data/shapes/railwayStations.js"></script>
     <script type="text/javascript" src="./data/shapes/railwayStations_photo.js"></script>
     <script type="text/javascript" src="./data/shapes/buildings.js"></script>
-    <script type="text/javascript" src="./data/hydrant/mapOfHudrant.js"></script>
+    <script type="text/javascript" src="./data/hydrant/mapOfHudrant1.js"></script>
     <button id="startRouting" style="position: absolute; bottom: 10px; left: 10px; z-index: 1000;">
         Построить маршрут
     </button>
@@ -241,9 +253,6 @@
 
             
 
-
-
-
         });
 
 
@@ -304,8 +313,6 @@
         .addTo(myMap);
 
 
-
-        
         let  routingControl = null;
         const hydrantMarkers = []; 
 
@@ -317,29 +324,177 @@
                         iconSize: [24, 24],
                         iconAnchor: [12, 12]
                     })
-                }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`);
+                });
 
-                hydrantMarkers.push(marker); 
+                
+                hydrantMarkers.push(marker);
+
+                
+                marker.on('click', function() {
+                    if (routingEnabled) {
+                        const container = L.DomUtil.create('div'),
+                            startBtn = createButton('Отсюда', container),
+                            destBtn = createButton('Сюда', container);
+
+                        L.popup()
+                            .setContent(container)
+                            .setLatLng(latlng)
+                            .openOn(myMap);
+
+                        L.DomEvent.on(startBtn, 'click', function() {
+                            control.spliceWaypoints(0, 1, latlng);
+                            myMap.closePopup();
+                        });
+
+                        L.DomEvent.on(destBtn, 'click', function() {
+                            control.spliceWaypoints(control.getWaypoints().length - 1, 1, latlng);
+                            myMap.closePopup();
+
+                            const waypoints = control.getWaypoints();
+                            if (waypoints[0].latLng && waypoints[1].latLng) {
+                                routingEnabled = false;
+                            }
+                        });
+
+                    } else {
+                        
+                        marker.bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`).openPopup();
+                    }
+                });
+
                 return marker;
             }
         }).addTo(myMap);
 
+
+
         
 
-        function findNearestHydrant(latlng) {
-            let minDist = Infinity;
-            let nearest = null;
 
-            allHydrants.forEach(hydrant => {
-                const dist = latlng.distanceTo(hydrant.latlng); 
-                if (dist < minDist) {
-                    minDist = dist;
-                    nearest = hydrant;
-                }
+        // let  routingControl = null;
+        // const hydrantMarkers = []; 
+
+        // const hydrantLayer = L.geoJSON(hydrant, {
+        //     pointToLayer: function(feature, latlng) {
+        //         const marker = L.marker(latlng, {
+        //             icon: L.icon({
+        //                 iconUrl: './data/icons/hydrant.png', 
+        //                 iconSize: [24, 24],
+        //                 iconAnchor: [12, 12]
+        //             })
+        //         }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`);
+
+        //         hydrantMarkers.push(marker); 
+        //         return marker;
+        //     }
+        // }).addTo(myMap);
+
+        // let nearestHydrantMarker = null;
+
+        // function findNearestHydrant(latlng) {
+        //     let minDist = Infinity;
+        //     let nearest = null;
+
+        //     allHydrants.forEach(hydrant => {
+        //         const dist = latlng.distanceTo(hydrant.latlng); 
+        //         if (dist < minDist) {
+        //             minDist = dist;
+        //             nearest = hydrant;
+        //         }
+        //     });
+
+        //     return nearest;
+        // }
+
+
+
+        function findNearestHydrantSmart(startLatLng, hydrantList, maxCandidates = 10) {
+            // 1. Вычисляем прямое расстояние до каждого гидранта
+            const sortedHydrants = hydrantList.map(marker => {
+                const latlng = marker.getLatLng();
+                return {
+                    marker: marker,
+                    latlng: latlng,
+                    distance: startLatLng.distanceTo(latlng)
+                };
+            }).sort((a, b) => a.distance - b.distance);
+
+            
+            const candidates = sortedHydrants.slice(0, maxCandidates);
+
+            let shortest = null;
+            let minRouteDistance = Infinity;
+            let completed = 0;
+
+            candidates.forEach(candidate => {
+                L.Routing.osrmv1().route([
+                    L.Routing.waypoint(startLatLng),
+                    L.Routing.waypoint(candidate.latlng)
+                ], function(err, routes) {
+                    completed++;
+
+                    if (!err && routes && routes[0]) {
+                        const routeDistance = routes[0].summary.totalDistance;
+
+                        if (routeDistance < minRouteDistance) {
+                            minRouteDistance = routeDistance;
+                            shortest = {
+                                marker: candidate.marker,
+                                route: routes[0]
+                            };
+                        }
+                    }
+
+                    
+                    if (completed === candidates.length && shortest) {
+                        if (routingControl) {
+                            myMap.removeControl(routingControl);
+                        }
+
+                        routingControl = L.Routing.control({
+                            waypoints: [startLatLng, shortest.marker.getLatLng()],
+                            routeWhileDragging: false,
+                            language: 'ru'
+                        }).addTo(myMap);
+
+                        
+
+                        
+                        L.popup()
+                            .setLatLng(shortest.marker.getLatLng())
+                            .setContent(`<b>Ближайший гидрант</b><br>Расстояние: ${(minRouteDistance / 1000).toFixed(2)} км`)
+                            .openOn(myMap);
+                    }
+                });
             });
-
-            return nearest;
         }
+
+        myMap.on('click', function(e) {
+            if (!routingEnabled) {
+                findNearestHydrantSmart(e.latlng, hydrantMarkers, 10); 
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        myMap.on('zoomend', function () {
+            const currentZoom = myMap.getZoom();
+
+            if (currentZoom < 14) {
+                myMap.removeLayer(hydrantLayer);
+            } else {
+                myMap.addLayer(hydrantLayer);
+            }
+        });
 
 
         // myMap.on('click', function(e) {
@@ -359,45 +514,52 @@
                         
         // });
 
-        myMap.on('click', function(e) {
-
-            if (routingEnabled) return;
-
-            const clickLatLng = e.latlng;
-
-            let nearest = null;
-            let minDistance = Infinity;
-
-            hydrantMarkers.forEach(marker => {
-                const dist = clickLatLng.distanceTo(marker.getLatLng());
-                if (dist < minDistance) {
-                    minDistance = dist;
-                    nearest = marker;
-                }
-            });
-
-            if (nearest) {
-                nearest.openPopup();
-
-                if (routingControl) {
-                    myMap.removeControl(routingControl);
-                }
-
-                routingControl = L.Routing.control({
-                    waypoints: [
-                        L.latLng(clickLatLng.lat, clickLatLng.lng),
-                        nearest.getLatLng()
-                    ],
-                    routeWhileDragging: false,
-                    language: 'ru',
-                    createMarker: function(i, wp) {
-                        return L.marker(wp.latLng, {
-                            draggable: false
-                        }).bindPopup(i === 0 ? 'Точка клика' : 'Ближайший гидрант');
-                    }
-                }).addTo(myMap);
-            }
+        const redIcon = L.icon({
+            iconUrl: './data/icons/marker-icon-red.png',
+            iconSize: [25, 41],
         });
+
+
+
+        // myMap.on('click', function(e) {
+
+        //     if (routingEnabled) return;
+
+        //     const clickLatLng = e.latlng;
+
+        //     let nearest = null;
+        //     let minDistance = Infinity;
+
+        //     hydrantMarkers.forEach(marker => {
+        //         const dist = clickLatLng.distanceTo(marker.getLatLng());
+        //         if (dist < minDistance) {
+        //             minDistance = dist;
+        //             nearest = marker;
+        //         }
+        //     });
+
+        //     if (nearest) {
+        //         nearest.openPopup();
+
+        //         if (routingControl) {
+        //             myMap.removeControl(routingControl);
+        //         }
+
+        //         routingControl = L.Routing.control({
+        //             waypoints: [
+        //                 L.latLng(clickLatLng.lat, clickLatLng.lng),
+        //                 nearest.getLatLng()
+        //             ],
+        //             routeWhileDragging: false,
+        //             language: 'ru',
+        //             createMarker: function(i, wp) {
+        //                 return L.marker(wp.latLng, { icon: redIcon }, {
+        //                     draggable: false
+        //                 }).bindPopup(i === 0 ? 'Точка клика' : 'Ближайший гидрант');
+        //             }
+        //         }).addTo(myMap);
+        //     }
+        // });
 
 
 

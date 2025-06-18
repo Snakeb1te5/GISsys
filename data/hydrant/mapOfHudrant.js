@@ -1,4 +1,4 @@
-var hydrant = {
+var hydran = {
     "type": "FeatureCollection",
     "generator": "JOSM",
     "bbox": [
