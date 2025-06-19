@@ -35,7 +35,7 @@
     <script type="text/javascript" src="./data/shapes/railwayStations_photo.js"></script>
     <script type="text/javascript" src="./data/shapes/buildings.js"></script>
     <script type="text/javascript" src="./data/hydrant/mapOfHudrant1.js"></script>
-    <button id="startRouting" style="position: absolute; bottom: 10px; left: 10px; z-index: 1000; background-color: #006fff; color: white; border-radius: 15px; height: 50px; cursor: pointer;">
+    <button id="startRouting" style="position: absolute; bottom: 10px; left: 10px; z-index: 1000;">
         Построить маршрут
     </button>
     </div>
@@ -257,7 +257,26 @@
 
 
 
-        
+        // const geojsonFiles = ['data/hydrant/track_points.geojson', 'data/hydrant/tracks.geojson', 'data/hydrant/waypoints.geojson'];
+
+        // geojsonFiles.forEach(file => {
+        //     fetch(file)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             L.geoJSON(data, {
+        //                 pointToLayer: function (feature, latlng) {
+        //                     return L.marker(latlng, {
+        //                         icon: L.icon({
+        //                             iconUrl: './data/icons/hydrant.png', 
+        //                             iconSize: [24, 24],
+        //                             iconAnchor: [12, 12]
+        //                         })
+        //                     }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat}, ${latlng.lng}`);
+        //                 }
+        //             }).addTo(myMap);
+        //         })
+        //         .catch(error => console.error(`Ошибка загрузки ${file}:`, error));
+        // });
         
 
         //Загрузка точечных объектов из геоджейсон
@@ -352,9 +371,45 @@
         
 
 
+        // let  routingControl = null;
+        // const hydrantMarkers = []; 
+
+        // const hydrantLayer = L.geoJSON(hydrant, {
+        //     pointToLayer: function(feature, latlng) {
+        //         const marker = L.marker(latlng, {
+        //             icon: L.icon({
+        //                 iconUrl: './data/icons/hydrant.png', 
+        //                 iconSize: [24, 24],
+        //                 iconAnchor: [12, 12]
+        //             })
+        //         }).bindPopup(`<b>Гидрант</b><br>Координаты: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`);
+
+        //         hydrantMarkers.push(marker); 
+        //         return marker;
+        //     }
+        // }).addTo(myMap);
+
+        // let nearestHydrantMarker = null;
+
+        // function findNearestHydrant(latlng) {
+        //     let minDist = Infinity;
+        //     let nearest = null;
+
+        //     allHydrants.forEach(hydrant => {
+        //         const dist = latlng.distanceTo(hydrant.latlng); 
+        //         if (dist < minDist) {
+        //             minDist = dist;
+        //             nearest = hydrant;
+        //         }
+        //     });
+
+        //     return nearest;
+        // }
+
+
 
         function findNearestHydrantSmart(startLatLng, hydrantList, maxCandidates = 10) {
-          
+            // 1. Вычисляем прямое расстояние до каждого гидранта
             const sortedHydrants = hydrantList.map(marker => {
                 const latlng = marker.getLatLng();
                 return {
@@ -422,6 +477,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
         myMap.on('zoomend', function () {
             const currentZoom = myMap.getZoom();
 
@@ -433,12 +497,78 @@
         });
 
 
-      
+        // myMap.on('click', function(e) {
+        //     if (!routingEnabled) {
+        //         const nearest = findNearestHydrant(e.latlng); 
+
+        //         if (nearest) {
+        //             L.popup()
+        //                 .setLatLng(nearest.latlng)
+        //                 .setContent(`<b>Ближайший гидрант:</b> ${nearest.feature.properties.name} <br>Координаты: ${nearest.latlng.lat.toFixed(5)}, ${nearest.latlng.lng.toFixed(5)}`)
+        //                 .openOn(myMap);
+        //         }
+
+        //         return; 
+        //     }
+
+                        
+        // });
 
         const redIcon = L.icon({
             iconUrl: './data/icons/marker-icon-red.png',
             iconSize: [25, 41],
         });
+
+
+
+        // myMap.on('click', function(e) {
+
+        //     if (routingEnabled) return;
+
+        //     const clickLatLng = e.latlng;
+
+        //     let nearest = null;
+        //     let minDistance = Infinity;
+
+        //     hydrantMarkers.forEach(marker => {
+        //         const dist = clickLatLng.distanceTo(marker.getLatLng());
+        //         if (dist < minDistance) {
+        //             minDistance = dist;
+        //             nearest = marker;
+        //         }
+        //     });
+
+        //     if (nearest) {
+        //         nearest.openPopup();
+
+        //         if (routingControl) {
+        //             myMap.removeControl(routingControl);
+        //         }
+
+        //         routingControl = L.Routing.control({
+        //             waypoints: [
+        //                 L.latLng(clickLatLng.lat, clickLatLng.lng),
+        //                 nearest.getLatLng()
+        //             ],
+        //             routeWhileDragging: false,
+        //             language: 'ru',
+        //             createMarker: function(i, wp) {
+        //                 return L.marker(wp.latLng, { icon: redIcon }, {
+        //                     draggable: false
+        //                 }).bindPopup(i === 0 ? 'Точка клика' : 'Ближайший гидрант');
+        //             }
+        //         }).addTo(myMap);
+        //     }
+        // });
+
+
+
+        
+        
+
+
+
+
 
 
 

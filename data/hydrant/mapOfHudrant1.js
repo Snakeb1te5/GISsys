@@ -70,6 +70,29 @@ var hydrant = {
         {
             "type": "Feature",
             "properties": {
+                "fire_operator": "RU-MSK-25-6",
+                "pressure": "5",
+                "operator": "Мосводоканал (РЭВС-8)",
+                "type": "underground",
+                "city": "Москва",
+                "diameter": "К-250",
+                "ref": "17750",
+                "name": "К-250",
+                "emergency": "fire_hydrant",
+                "housenumber": "6с6",
+                "street": "1-й Кожевнический переулок"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    37.63556480000,
+                    55.76571680000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
                 "emergency": "fire_hydrant",
                 "city": "Москва",
                 "diameter": "К-300",
